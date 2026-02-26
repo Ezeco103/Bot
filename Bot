@@ -1,0 +1,62 @@
+import discord
+import random
+
+
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True  
+
+
+client = discord.Client(intents=intents)
+
+@client.event
+async def on_ready():
+    print("Hemos iniciado sesión como " + str(client.user))
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    
+    if message.content.startswith('$hello'):
+        await message.channel.send("Hi!")
+
+    
+    elif message.content.startswith('$bye'):
+        await message.channel.send("\U0001f642")
+
+    
+    elif message.content.startswith('$pass'):
+        caracteres = "+-/*!&$#?=@<>"
+        password = ""
+
+        for i in range(10):
+            password += random.choice(caracteres)
+
+        await message.channel.send("Tu contraseña es: " + password)
+
+    
+    elif message.content.startswith('$emoji'):
+        emojis = ["😀", "😂", "😎", "🤖", "🔥", "🎉"]
+        await message.channel.send(random.choice(emojis))
+
+    
+    elif message.content.startswith('$joined'):
+
+        if len(message.mentions) > 0:
+            member = message.mentions[0]
+            fecha = member.joined_at
+
+            if fecha is not None:
+                await message.channel.send(member.name + " se unió el " + str(fecha))
+            else:
+                await message.channel.send("No puedo obtener la fecha.")
+        else:
+            await message.channel.send("Debes mencionar a un usuario.")
+
+    else:
+        await message.channel.send("No entiendo ese comando.")
+
+
+client.run("Aquí iría tu Token")
